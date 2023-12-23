@@ -47,18 +47,21 @@ namespace Avalonia.Threading
                 return;
             }
 
+            Console.WriteLine("AvaloniaSynchronizationContext.InstallIfNeeded");
             SetSynchronizationContext(Dispatcher.UIThread.GetContextWithPriority(DispatcherPriority.Normal));
         }
 
         /// <inheritdoc/>
         public override void Post(SendOrPostCallback d, object? state)
         {
+            Console.WriteLine("AvaloniaSynchronizationContext.Post");
             Dispatcher.UIThread.Post(d, state, Priority);
         }
 
         /// <inheritdoc/>
         public override void Send(SendOrPostCallback d, object? state)
         {
+            Console.WriteLine("AvaloniaSynchronizationContext.Send");
             if (Dispatcher.UIThread.CheckAccess())
                 d(state);
             else
@@ -70,6 +73,7 @@ namespace Avalonia.Threading
 #endif
         public override int Wait(IntPtr[] waitHandles, bool waitAll, int millisecondsTimeout)
         {
+            Console.WriteLine("AvaloniaSynchronizationContext.Wait");
             if (
                 _nonPumpingHelper != null
                 && Dispatcher.UIThread.CheckAccess() 

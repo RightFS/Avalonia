@@ -1,5 +1,7 @@
+using System;
 using System.Diagnostics;
 using System.Runtime.Versioning;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Browser;
@@ -13,13 +15,21 @@ internal partial class Program
 {
     public static async Task Main(string[] args)
     {
+        Console.WriteLine("Before 1 {0}", SynchronizationContext.Current?.GetType());
+        await Task.Delay(100);
+        Console.WriteLine("After 1 {0}", SynchronizationContext.Current?.GetType());
+        
         Trace.Listeners.Add(new ConsoleTraceListener());
 
         await BuildAvaloniaApp()
             .LogToTrace(LogEventLevel.Warning)
-            .AfterSetup(_ =>
+            .AfterSetup(async _ =>
             {
                 ControlCatalog.Pages.EmbedSample.Implementation = new EmbedSampleWeb();
+                
+                Console.WriteLine("Before 2 {0}", SynchronizationContext.Current?.GetType());
+                await Task.Delay(100);
+                Console.WriteLine("After 2 {0}", SynchronizationContext.Current?.GetType());
             })
             .StartBrowserAppAsync("out");
     }
